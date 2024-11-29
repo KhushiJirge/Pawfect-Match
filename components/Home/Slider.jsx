@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Image, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore';
 import {db} from './../../config/FirebaseConfig'
@@ -11,6 +11,7 @@ export default function Slider() {
     }, [])
 
     const GetSliders=async()=>{
+        setSliderList([]);
         const snapshot = await getDocs(collection(db, "Sliders"));
         snapshot.forEach((doc)=>{
             console.log(doc.data())
@@ -19,15 +20,26 @@ export default function Slider() {
         })
     }
   return (
-    <View>
+    // <View><Text>Hi</Text>
+    // <Image source={{uri:"https://ontariospca.ca/wp-content/uploads/2023/11/SpecializedFosterVolunteer-AdoptionPageBanner-scaled.jpg"}}
+    // style={styles?.sliderImage}/></View>
+    <View
+    style={{
+        marginTop:15
+        
+    }}>
       <FlatList
             data={sliderList}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
             renderItem={({item,index})=>{
-                <View>
-                    <Image source={{uri:item?.imageURL}}
-                    style={styles?.sliderImage}/>
-                </View>
-            }}
+                return(
+                    <View>
+                        <Image source={{uri:item?.imageURL}}
+                        style={styles?.sliderImage}/>
+                    </View> 
+                )
+            }} 
       />
     </View>
   )
@@ -35,7 +47,9 @@ export default function Slider() {
 
 const styles = StyleSheet.create({
     sliderImage:{
-        width:'80%',
-        height:160
+        width:Dimensions.get('screen').width*0.9,
+        height:160,
+        borderRadius:15,
+        marginRight:15,
     }
 })
