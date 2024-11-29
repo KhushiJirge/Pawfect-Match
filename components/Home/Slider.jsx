@@ -20,13 +20,10 @@ export default function Slider() {
         })
     }
   return (
-    // <View><Text>Hi</Text>
-    // <Image source={{uri:"https://ontariospca.ca/wp-content/uploads/2023/11/SpecializedFosterVolunteer-AdoptionPageBanner-scaled.jpg"}}
-    // style={styles?.sliderImage}/></View>
     <View
     style={{
         marginTop:15
-        
+
     }}>
       <FlatList
             data={sliderList}
