@@ -6,7 +6,7 @@ import Colors from './../../constants/Colors'
 
 
 
-export default function Category() {
+export default function Category({category}) {
 
     const [categoryList, setCategoryList]=useState([]);
     const [selectedCategory, setSelectedCategory]=useState('Dog')
@@ -37,7 +37,10 @@ export default function Category() {
         renderItem={({item,index})=>{
             return(
                 <TouchableOpacity 
-                onPress={()=>setSelectedCategory(item.name)}
+                onPress={()=>{
+                    setSelectedCategory(item.name);
+                    category(item.name)
+                }}
                 style={{
                     flex:1
                 }}> 
