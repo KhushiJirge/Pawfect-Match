@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
 import Colors from '../../constants/Colors'
-import MarkFav from './MarkFav';
+import MarkFav from '../MarkFav';
 
 
 export default function PetInfo({pet}) {
@@ -32,7 +32,7 @@ export default function PetInfo({pet}) {
                 color:Colors.GRAY
             }}>{pet?.address}</Text>
         </View>
-        <MarkFav/>
+        <MarkFav pet={pet}/>
       </View>
     </View>
   )

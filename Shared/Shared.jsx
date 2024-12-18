@@ -1,4 +1,4 @@
-import { getDoc } from "firebase/firestore"
+import { getDoc, updateDoc } from "firebase/firestore"
 import { db } from './../config/FirebaseConfig'
 
 export const GetFavList=async(user)=>{
@@ -14,6 +14,18 @@ export const GetFavList=async(user)=>{
     }
 }
 
+const UpdateFav=async(user, favs)=>{
+    const docRef=doc(db, 'UserFavPet', user?.primaryEmailAddress?.emailAddress)
+    try{
+        await updateDoc(docRef, {
+            favs:favs
+        })
+    } catch(e){
+
+    }
+}
+
 export default {
-    GetFavList
+    GetFavList,
+    UpdateFav
 }
