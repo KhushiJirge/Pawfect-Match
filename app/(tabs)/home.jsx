@@ -5,6 +5,7 @@ import Slider from '../../components/Home/Slider'
 import PetListByCategory from '../../components/Home/PetListByCategory'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Colors from '../../constants/Colors'
+import { Link } from 'expo-router'
 
 export default function Home() {
   return (
@@ -14,7 +15,8 @@ export default function Home() {
       <Header/>
       <Slider/>
       <PetListByCategory/>
-      <TouchableOpacity 
+      <Link 
+      href={'/add-new-pet'}
       style={{
         display:'flex',
         gap:10,
@@ -22,6 +24,7 @@ export default function Home() {
         alignItems:'center',
         padding:20,
         marginTop:20,
+        textAlign:'center',
         backgroundColor:Colors.LIGHT_PRIMARY,
         borderWidth:1,
         borderColor:Colors.PRIMARY,
@@ -35,7 +38,7 @@ export default function Home() {
             color:Colors.PRIMARY,
             fontSize:18
           }}>Add New Pet</Text>
-      </TouchableOpacity>
+      </Link>
     </View>
   )
 }
