@@ -1,21 +1,29 @@
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Pressable } from 'react-native'
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Pressable, ToastAndroid, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useNavigation } from 'expo-router'
+import { useNavigation, useRouter } from 'expo-router'
 import Colors from '../../constants/Colors';
 import { Picker } from '@react-native-picker/picker';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../config/FirebaseConfig';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { db, storage } from '../../config/FirebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { useUser } from '@clerk/clerk-expo';
 
 
 
 export default function AddNewPet() {
     const navigation = useNavigation();
-    const [formData, setFormData] = useState();
+    const [formData, setFormData] = useState({
+        category:'Dog',
+        sex:'Male'
+    });
     const [gender, setGender] = useState();
     const [categoryList, setCategoryList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState();
     const [image, setImage]= useState();
+    const {user} = useUser();
+    const [loader, setLoader]=useState(false)
+    const router=useRouter();
 
     useEffect(() => {
         navigation.setOptions({
@@ -55,7 +63,46 @@ export default function AddNewPet() {
     }
 
     const onSubmit=async()=>{
-        console.log(formData)
+        if(Object.keys(formData).length != 8){
+            ToastAndroid.show('Enter All Details', ToastAndroid.SHORT)
+            return;
+        }
+        
+        UploadImage()
+
+
+    }
+
+    const UploadImage=async()=>{
+        setLoader(true)
+        const resp=await fetch(image);
+        const blockImage = await resp.blob();
+        const storageRef = ref(storage, '/PetAdopt/' + Date.now()+'.jpg')
+
+        uploadBytes(storage, blob).then((snapshot)=>{
+            console.log('File Uploaded')
+        }).then(resp=>{
+            getDownloadURL(storageRef).then(async(downloadUrl)=>{
+                console.log(downloadUrl)
+                SaveFromData(downloadUrl)
+            })
+        })
+
+    }
+
+    const SaveFromData=async(imageUrl)=>{
+        const docId=Date.now().toString();
+        await setDoc(doc(db, 'Pets', docId), {
+            ...formData,
+            imageURL:imageUrl,
+            username:user?.fullName,
+            email:user?.primaryEmailAddress?.emailAddress,
+            userImage:user?.imageUrl,
+            id:docId
+        })
+        setLoader(false)
+        router.replace('/(tabs)/home')
+
     }
 
     return (
@@ -114,7 +161,9 @@ export default function AddNewPet() {
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Age *</Text>
-                <TextInput style={styles.input} onChangeText={(value) => handleInputChange('age', value)} />
+                <TextInput style={styles.input} 
+                keyboardType='number-pad'
+                onChangeText={(value) => handleInputChange('age', value)} />
             </View>
 
 
@@ -134,7 +183,9 @@ export default function AddNewPet() {
 
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Weight *</Text>
-                <TextInput style={styles.input} onChangeText={(value) => handleInputChange('weight', value)} />
+                <TextInput style={styles.input} 
+                keyboardType='number-pad'
+                onChangeText={(value) => handleInputChange('weight', value)} />
             </View>
 
             <View style={styles.inputContainer}>
@@ -152,8 +203,10 @@ export default function AddNewPet() {
 
 
             <TouchableOpacity style={styles.button}
+            disabled={loader}
             onPress={onSubmit}>
-                <Text style={{ fontFamily: 'outfit-medium', textAlign: 'center' }}>Submit</Text>
+                {loader?<ActivityIndicator size={'large'}/>:
+                <Text style={{ fontFamily: 'outfit-medium', textAlign: 'center' }}>Submit</Text>}
             </TouchableOpacity>
 
         </ScrollView>
