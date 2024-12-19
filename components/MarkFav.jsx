@@ -13,7 +13,6 @@ export default function MarkFav({pet}) {
     }, [user])
     const GetFav=async()=>{
         const result = await Shared.GetFavList(user)
-        console.log(result)
         setFavList(result.favs?result.favs:[])
     }
 

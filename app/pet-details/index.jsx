@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect } from 'react'
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 import PetInfo from '../../components/PetDetails/PetInfo';
